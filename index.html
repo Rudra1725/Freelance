@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zyro Store | Future Essentials</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          },
+          colors: {
+            zyro: {
+              950: '#060813',
+              900: '#0b0f19',
+              850: '#111726',
+              800: '#161f33',
+              700: '#23304d',
+              accent: '#6366f1',
+              neon: '#818cf8',
+              emerald: '#10b981',
+              coral: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-zyro-950 text-slate-100 font-sans min-h-screen selection:bg-zyro-accent selection:text-white flex flex-col">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo (Triple-click secret trigger for owner) -->
+      <div onclick="handleLogoSecretClick()" class="flex items-center gap-3 group cursor-pointer select-none" title="Zyro Store">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center font-display font-extrabold text-white text-xl shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform duration-200">
+          Z
+        </div>
+        <div>
+          <span class="font-display font-bold text-2xl tracking-wider text-white">ZYRO<span class="text-indigo-400">.</span></span>
+          <span class="block text-[10px] tracking-widest text-slate-400 font-semibold uppercase -mt-1">Future Essentials</span>
+        </div>
+      </div>
+
+      <!-- Search Desktop -->
+      <div class="hidden md:flex flex-1 max-w-md mx-6">
+        <div class="relative w-full">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search futuristic gear, audio, tech..." 
+            oninput="handleSearch(this.value)"
+            class="w-full bg-zyro-900 border border-slate-700/70 rounded-full py-2.5 pl-11 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+          >
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500 text-xs"></i>
+        </div>
+      </div>
+
+      <!-- Navigation Actions -->
+      <div class="flex items-center gap-3">
+        <!-- Hidden Admin Button (Only shown if authorized or with ?admin=1) -->
+        <button 
+          id="adminToggleBtn" 
+          onclick="promptAdminAuth()" 
+          class="hidden items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-all duration-200"
+        >
+          <i class="fa-solid fa-lock text-indigo-400"></i>
+          <span id="adminToggleLabel">Owner Login</span>
+        </button>
+
+        <!-- Customer Bag Trigger -->
+        <button 
+          onclick="openCartDrawer()" 
+          class="relative flex items-center gap-2.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all duration-200 glow-accent"
+        >
+          <i class="fa-solid fa-bag-shopping text-base"></i>
+          <span class="hidden sm:inline">Bag</span>
+          <span id="cartCountBadge" class="w-5 h-5 rounded-full bg-zyro-emerald text-[11px] font-bold flex items-center justify-center text-white">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="p-3 md:hidden border-t border-slate-800 bg-zyro-900/60">
+      <div class="relative w-full">
+        <input 
+          type="text" 
+          placeholder="Search products..." 
+          oninput="handleSearch(this.value)"
+          class="w-full bg-zyro-950 border border-slate-700 rounded-full py-2 pl-10 pr-4 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+        >
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-500 text-xs"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-zyro-850 via-zyro-800 to-indigo-950/60 border border-slate-800 p-8 sm:p-10 mb-10">
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-medium mb-4">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Direct WhatsApp Ordering • No Registration Needed
+        </div>
+        <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          Next-Gen Tech & <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400">Curated Gear.</span>
+        </h1>
+        <p class="text-slate-400 mt-3 text-sm sm:text-base leading-relaxed">
+          Select items to build your cart, review directly in your bag, enter your shipping details, and complete your order instantly via verified WhatsApp messenger.
+        </p>
+      </div>
+    </section>
+
+    <!-- Admin Status Banner (Only visible to owner when active) -->
+    <section id="adminBanner" class="hidden mb-8 p-4 rounded-2xl bg-indigo-950/70 border border-indigo-500/40 items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-sm shadow">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-white">Owner Admin Mode Active</h4>
+          <p class="text-xs text-indigo-300">You can edit titles, prices, descriptions, and change product photos directly.</p>
+        </div>
+      </div>
+      <button 
+        onclick="openProductModal()" 
+        class="px-4 py-2 bg-zyro-emerald hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center gap-2"
+      >
+        <i class="fa-solid fa-plus"></i> Add New Product
+      </button>
+    </section>
+
+    <!-- Categories & Section Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold font-display text-white">Featured Catalog</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Explore selected hardware and audio devices</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2" id="categoryPills">
+        <button onclick="filterCategory('All')" class="cat-pill active px-3.5 py-1.5 rounded-full text-xs font-medium bg-indigo-600 text-white transition-colors">All</button>
+        <button onclick="filterCategory('Audio')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zyro-850 hover:bg-zyro-800 text-slate-300 border border-slate-700/60 transition-colors">Audio</button>
+        <button onclick="filterCategory('Peripherals')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zyro-850 hover:bg-zyro-800 text-slate-300 border border-slate-700/60 transition-colors">Peripherals</button>
+        <button onclick="filterCategory('Power')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zyro-850 hover:bg-zyro-800 text-slate-300 border border-slate-700/60 transition-colors">Power</button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+    <!-- Empty Catalog State -->
+    <div id="emptyCatalogState" class="hidden py-16 text-center">
+      <div class="w-16 h-16 rounded-2xl bg-zyro-850 mx-auto flex items-center justify-center text-slate-500 text-2xl mb-4">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-200">No matching products found</h3>
+      <p class="text-sm text-slate-400 mt-1">Try searching with a different keyword or category.</p>
+    </div>
+  </main>
+
+  <!-- Cart Backdrop -->
+  <div id="cartBackdrop" onclick="closeCartDrawer()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[460px] bg-zyro-900 border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-zyro-950/70">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center">
+          <i class="fa-solid fa-bag-shopping text-sm"></i>
+        </div>
+        <div>
+          <h3 class="font-display font-bold text-base text-white">Your Cart</h3>
+          <p class="text-xs text-slate-400"><span id="cartCountDrawer">0</span> items selected</p>
+        </div>
+      </div>
+      <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Scrollable Drawer Body -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-5">
+      <div id="cartItemsContainer" class="space-y-3"></div>
+
+      <!-- Buyer Details Form (Visible when cart has items) -->
+      <div id="buyerDetailsContainer" class="hidden bg-zyro-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+        <div class="flex items-center gap-2 pb-2 border-b border-slate-800/80">
+          <i class="fa-solid fa-location-dot text-indigo-400 text-xs"></i>
+          <span class="text-xs font-bold text-white uppercase tracking-wider">Delivery Details</span>
+        </div>
+        
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Full Name *</label>
+          <input 
+            type="text" 
+            id="custName" 
+            placeholder="e.g. Rahul Sharma" 
+            class="w-full bg-zyro-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">WhatsApp / Phone Number *</label>
+          <input 
+            type="tel" 
+            id="custPhone" 
+            placeholder="e.g. 9876543210" 
+            class="w-full bg-zyro-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-400 mb-1">Complete Delivery Address *</label>
+          <textarea 
+            id="custAddress" 
+            rows="2" 
+            placeholder="Flat/House No, Building, Area, City, Pin Code" 
+            class="w-full bg-zyro-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Footer -->
+    <div class="p-5 border-t border-slate-800 bg-zyro-950/80 space-y-4">
+      <div class="space-y-2">
+        <div class="flex justify-between text-xs text-slate-400">
+          <span>Subtotal</span>
+          <span id="cartSubtotal" class="font-medium text-slate-200">₹0</span>
+        </div>
+        <div class="flex justify-between text-xs text-slate-400">
+          <span>Convenience / Delivery</span>
+          <span class="text-emerald-400 font-medium">FREE</span>
+        </div>
+        <div class="flex justify-between text-base font-bold text-white pt-2 border-t border-slate-800">
+          <span>Total Amount</span>
+          <span id="cartTotal" class="text-indigo-400">₹0</span>
+        </div>
+      </div>
+
+      <button 
+        onclick="proceedToWhatsApp()" 
+        class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-bold text-sm flex items-center justify-center gap-2.5 transition duration-200 glow-emerald"
+      >
+        <i class="fa-brands fa-whatsapp text-lg"></i>
+        <span>Send Order to WhatsApp (9096925270)</span>
+      </button>
+
+      <p class="text-[11px] text-center text-slate-500">
+        Orders are delivered and confirmed directly by store owner on WhatsApp.
+      </p>
+    </div>
+  </div>
+
+  <!-- Admin PIN Authentication Modal -->
+  <div id="adminAuthModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-zyro-900 border border-slate-700 rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center">
+      <div class="w-10 h-10 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center mx-auto mb-3">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <h3 class="font-display font-bold text-base text-white mb-1">Owner Access</h3>
+      <p class="text-xs text-slate-400 mb-4">Enter secret PIN to unlock product editing</p>
+
+      <input 
+        type="password" 
+        id="adminPinInput" 
+        maxlength="10"
+        placeholder="Enter PIN" 
+        onkeydown="if(event.key === 'Enter') verifyAdminPin()"
+        class="w-full bg-zyro-950 border border-slate-700 rounded-xl py-2 px-3 text-center text-sm tracking-widest text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 mb-4"
+      />
+
+      <div class="flex gap-2">
+        <button 
+          type="button" 
+          onclick="closeAdminAuthModal()" 
+          class="flex-1 py-2 rounded-xl border border-slate-700 text-slate-400 hover:bg-slate-800 text-xs font-semibold"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          onclick="verifyAdminPin()" 
+          class="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold glow-accent"
+        >
+          Unlock
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Modal (Add/Edit) -->
+  <div id="productModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-zyro-900 border border-slate-700 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-zyro-950">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-pen-nib"></i>
+          </div>
+          <h3 id="modalHeading" class="font-display font-bold text-base text-white">Edit Product</h3>
+        </div>
+        <button onclick="closeProductModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="productForm" onsubmit="saveProductChanges(event)" class="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+        <input type="hidden" id="editId">
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1.5">Product Title</label>
+          <input 
+            type="text" 
+            id="editTitle" 
+            required 
+            placeholder="e.g., Cyberpunk Keycaps Set"
+            class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1.5">Brief Description</label>
+          <textarea 
+            id="editDesc" 
+            rows="2" 
+            placeholder="Key features, specs, warranty details..."
+            class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Discounted Price (₹)</label>
+            <input 
+              type="number" 
+              id="editPrice" 
+              required 
+              min="1" 
+              placeholder="999"
+              class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+            >
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Original MRP (₹)</label>
+            <input 
+              type="number" 
+              id="editOriginalPrice" 
+              placeholder="1499"
+              class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+            >
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Category</label>
+            <select id="editCategory" class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-indigo-500">
+              <option value="Audio">Audio</option>
+              <option value="Peripherals">Peripherals</option>
+              <option value="Power">Power</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1.5">Badge (Optional)</label>
+            <input 
+              type="text" 
+              id="editBadge" 
+              placeholder="HOT, NEW, 40% OFF"
+              class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+            >
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t border-slate-800">
+          <label class="block font-semibold text-slate-300">Product Image</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <span class="text-[11px] text-slate-400 block mb-1">Option 1: Upload from Device</span>
+              <input 
+                type="file" 
+                id="editImageFile" 
+                accept="image/*" 
+                onchange="handleLocalImageUpload(event)"
+                class="w-full text-[11px] text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer"
+              >
+            </div>
+            <div>
+              <span class="text-[11px] text-slate-400 block mb-1">Option 2: External Image URL</span>
+              <input 
+                type="url" 
+                id="editImageUrl" 
+                placeholder="https://..."
+                oninput="previewUrlImage(this.value)"
+                class="w-full bg-zyro-950 border border-slate-700 rounded-xl p-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 bg-zyro-950 p-3 rounded-xl border border-slate-800">
+          <img id="editImagePreview" src="" alt="Preview" class="w-16 h-16 object-cover rounded-lg bg-slate-900 border border-slate-700">
+          <div class="text-[11px] text-slate-400">
+            <span class="font-semibold text-slate-200 block">Image Preview</span>
+            Photo will update automatically across the storefront once saved.
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+          <button 
+            type="button" 
+            onclick="closeProductModal()" 
+            class="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-semibold"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center gap-2 glow-accent"
+          >
+            <i class="fa-solid fa-check"></i>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 bg-zyro-900 border border-slate-700 text-slate-200 px-4 py-3 rounded-2xl shadow-xl">
+    <div id="toastIcon" class="w-7 h-7 rounded-lg bg-indigo-600/30 text-indigo-400 flex items-center justify-center text-xs">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <span id="toastMsg" class="text-xs font-semibold">Product added to bag!</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-800/80 bg-zyro-900/60 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-display font-bold text-white tracking-wider">ZYRO STORE</span>
+        <span>• Futuristic Direct Ordering</span>
+      </div>
+      <div>
+        Direct WhatsApp Support: <a href="https://wa.me/919096925270" target="_blank" class="text-indigo-400 hover:underline font-mono">+91 9096925270</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- External Script -->
+  <script src="app.js"></script>
+</body>
+</html>
