@@ -1,6 +1,6 @@
 # ⚡ Zyro Store — Next-Gen Direct WhatsApp E-Commerce Storefront
 
-A modern, responsive e-commerce web application built for frictionless direct-to-WhatsApp ordering. **Zyro Store** features a dark futuristic UI, shopping bag state management, customer delivery intake, and an owner-exclusive admin management suite with zero backend dependencies.
+A modern, responsive e-commerce web application built for frictionless direct-to-WhatsApp ordering. **Zyro Store** features a dark futuristic UI, shopping bag state management, customer delivery intake, and an owner-exclusive admin management suite with zero backend dependencies. Made with AI
 
 ---
 
